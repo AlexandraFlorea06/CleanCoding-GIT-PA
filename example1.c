@@ -3,24 +3,27 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+//structura pentru un nod din lista de adiacenta
 typedef struct Node {
     int data;
     struct Node *next;
 } NODE;
 
-
+//structura pentru graf
 typedef struct Graph {
     int vertexCount;
     int *visited;
     struct Node **AdjList;
 } GRAPH;
 
+//structura pentru stiva
 typedef struct Stack {
     int top;
     int capacity;
     int *array;
 } STACK;
 
+//crearea unui nod nou
 NODE *create_node(int nodeValue) {
     NODE *NewNode = malloc(sizeof(NODE));
     NewNode->data = nodeValue;
@@ -28,6 +31,7 @@ NODE *create_node(int nodeValue) {
     return NewNode;
 }
 
+//adaugarea unei muchii intre 2 noduri
 void add_edge(GRAPH *graph, int src, int dest) {
     NODE *NewNode = create_node(dest);
     NewNode->next = graph->AdjList[src];
@@ -37,6 +41,7 @@ void add_edge(GRAPH *graph, int src, int dest) {
     graph->AdjList[dest] = NewNode;
 }
 
+//crearea si initializarea unui graf cu un nr de noduri
 GRAPH *create_graph(int vertex) {
     int i;
     GRAPH *graph = malloc(sizeof(GRAPH));
@@ -45,12 +50,13 @@ GRAPH *create_graph(int vertex) {
     graph->visited = malloc(sizeof(int) * vertex);
 
     for (int i = 0; i < vertex; i++) {
-        graph->AdjList[i] = NULL;
-        graph->visited[i] = 0;
+        graph->AdjList[i] = NULL; //initial fara vecini
+        graph->visited[i] = 0; //nodurile nu sunt vizitate
     }
     return graph;
 }
 
+//crearea unei stive
 STACK *create_stack(int capacity) {
     STACK *stack = malloc(sizeof(STACK));
     stack->array = malloc(capacity * sizeof(int));
@@ -60,6 +66,7 @@ STACK *create_stack(int capacity) {
     return stack;
 }
 
+//adaugarea unui element in stiva
 void push(int value, STACK *stack) {
     if (stack->top + 1 < stack->capacity) {
         stack->top = stack->top + 1;
@@ -67,11 +74,13 @@ void push(int value, STACK *stack) {
     }
 }
 
+
+//parcurgere DFS
 void DFS(GRAPH *graph, STACK *stack, int v_nr) {
     NODE *adj_list = graph->AdjList[v_nr];
     NODE *aux = adj_list;
-    graph->visited[v_nr] = 1;
-    push(v_nr, stack);
+    graph->visited[v_nr] = 1; //nod vizitat
+    push(v_nr, stack); //adaugarea nodului in stiva
     while (aux != NULL) {
         int neighbor = aux->data;
         if (graph->visited[neighbor] == 0)
@@ -80,6 +89,7 @@ void DFS(GRAPH *graph, STACK *stack, int v_nr) {
     }
 }
 
+//introducerea muchiilor in graf
 void insert_edges(GRAPH *graph, int edge_count, int vertex_count) {
     int src, dest, i;
     printf("adauga %d munchii (de la 0 la %d)\n", edge_count, vertex_count - 1);
@@ -95,7 +105,8 @@ void wipe(GRAPH *graph, int vertex_count) {
     }
 }
 
-void CanReachPath(GRAPH *g, int vertex_count, STACK *stack1, STACK *stack2) // 0 sau 1 daca poate fi sau nu ajuns
+//verificare daca exista drum intre 2 ndouri 
+void CanReachPath(GRAPH *g, int vertex_count, STACK *stack1) // 0 sau 1 daca poate fi sau nu ajuns
 {
     int start, end;
     printf("Introduceti nodul de start: ");
@@ -114,19 +125,18 @@ void CanReachPath(GRAPH *g, int vertex_count, STACK *stack1, STACK *stack2) // 0
 int main() {
     int vertex_count;
     int edge_count;
-
+//citire nr de noduri 
     printf("Cate noduri are graful?\n");
     scanf("%d", &vertex_count);
-
+//citire muchii
     printf("Cate muchii are graful?\n");
     scanf("%d", &edge_count);
-
+//initializaare graf si inca o stiva (am eliminat a doua stiva din codul initial, era inutila)
     GRAPH *graph = create_graph(vertex_count);
     STACK *stack1 = create_stack(2 * vertex_count);
-    STACK *stack2 = create_stack(2 * vertex_count);
-
+//apelarea functiei care construieste graful
     insert_edges(graph, edge_count, vertex_count);
-
-    CanReachPath(graph, vertex_count, stack1, stack2);
+//apelarea functiei care verifica daca exista drum
+    CanReachPath(graph, vertex_count, stack1);
     return 0;
 }
