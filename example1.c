@@ -105,8 +105,8 @@ void wipe(GRAPH *graph, int vertex_count) {
     }
 }
 
-//verificare daca exista drum intre 2 ndouri 
-void CanReachPath(GRAPH *g, int vertex_count, STACK *stack1) // 0 sau 1 daca poate fi sau nu ajuns
+//verificare daca exista drum intre 2 noduri 
+void CanReachPath(GRAPH *g, int vertex_count, STACK *stack1) 
 {
     int start, end;
     printf("Introduceti nodul de start: ");
